@@ -16,7 +16,7 @@
     "spotify-url-info": "^3.2.18",
     "spotify-web-api-node": "^5.0.2",
     "yt-search": "^2.12.1"
-    "**@discordjs/voice**": "^0.16.0"
+    "@discordjs/voice": "^0.16.0"
   },
   "scripts": {
     "start": "node index.js"
