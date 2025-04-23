@@ -1,4 +1,4 @@
-ๆconst { Riffy, Player } = require("riffy");
+const { Riffy, Player } = require("riffy");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, PermissionsBitField } = require("discord.js");
 const { requesters } = require("./commands/play");
 const { Dynamic } = require("musicard");
