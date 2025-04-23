@@ -1,4 +1,4 @@
-const { Riffy, Player } = require("riffy");
+ๆconst { Riffy, Player } = require("riffy");
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, PermissionsBitField } = require("discord.js");
 const { requesters } = require("./commands/play");
 const { Dynamic } = require("musicard");
@@ -367,10 +367,20 @@ async function getLyrics(trackName, artistName, duration) {
 
         //console.log(`✅ Cleaned Data: ${trackName} - ${artistName} (${duration}s)`);
 
-        
-        let response = await axios.get(`https://lrclib.net/api/get`, {
-            params: { track_name: trackName, artist_name: artistName, duration }
-        });
+let response = await axios.get(`https://lrclib.net/api/get`, {
+    params: { track_name: trackName, artist_name: artistName, duration }
+});
+
+// ตรวจสอบว่า response.data เป็นอาเรย์หรือไม่
+if (Array.isArray(response.data)) {
+    // ถ้าเป็นอาเรย์ ให้ใช้ .map() กับข้อมูลในอาเรย์
+    return response.data.map(item => item.lyrics || null).join('\n');
+}
+
+// ถ้า response.data ไม่ใช่อาเรย์ ให้เช็ค syncedLyrics หรือ plainLyrics
+if (response.data.syncedLyrics || response.data.plainLyrics) {
+    return response.data.syncedLyrics || response.data.plainLyrics;
+}
 
         if (response.data.syncedLyrics || response.data.plainLyrics) {
             return response.data.syncedLyrics || response.data.plainLyrics;
