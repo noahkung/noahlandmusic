@@ -494,10 +494,16 @@ async function showLyrics(channel, player) {
     
             const deleteRow = new ActionRowBuilder().addComponents(deleteButton);
     
-            await message.edit({ embeds: [embed], components: [deleteRow] });
-        } else if (i.customId === "deleteLyrics") {
-            await message.delete();
+           async function someFunction() {
+    await message.edit({ embeds: [embed], components: [deleteRow] }); // ✅
+}
+
+               } else if (i.customId === "fullLyrics") {
+            clearInterval(interval);
+            embed.setDescription(lines.join('\n'));
+            await message.edit({ embeds: [embed], components: [] });
         }
+
     });
 
     collector.on('end', () => {
