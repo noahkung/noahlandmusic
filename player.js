@@ -496,7 +496,6 @@ async function showLyrics(channel, player) {
     
            async function someFunction() {
     await message.edit({ embeds: [embed], components: [deleteRow] }); // ✅
-}
 
                } else if (i.customId === "fullLyrics") {
             clearInterval(interval);
