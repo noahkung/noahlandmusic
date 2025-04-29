@@ -468,18 +468,19 @@ async function showLyrics(channel, player) {
 
     const collector = message.createMessageComponentCollector({ time: 600000 });
 
-    collector.on('collect', async i => {
-        await i.deferUpdate();
-    
-        if (i.customId === "stopLyrics") {
-            clearInterval(interval);
-            await message.delete();
-        } else if (i.customId === "fullLyrics") {
-            clearInterval(interval);
-            embed.setDescription(lines.join('\n').slice(0, 4096)); // Discord embed limit
-            await message.edit({ embeds: [embed], components: [] });
-        }
-    });
+collector.on('collect', async i => {
+    await i.deferUpdate();
+
+    if (i.customId === "stopLyrics") {
+        clearInterval(interval);
+        await message.delete();
+    } else if (i.customId === "fullLyrics") {
+        clearInterval(interval);
+        embed.setDescription(lines.join('\n').slice(0, 4096));
+        await message.edit({ embeds: [embed], components: [] });
+    }
+}); // ✅ ปิด collector.on อย่างถูกต้อง
+
 
     collector.on('end', () => {
         clearInterval(interval);
