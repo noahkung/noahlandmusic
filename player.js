@@ -476,7 +476,16 @@ async function showLyrics(channel, player) {
             await message.delete();
         } else if (i.customId === "fullLyrics") {
             clearInterval(interval);
-            embed.setDescription(lines.join('\n'));
+            embed.setDescription(lines.join('\n').slice(0, 4096)); // Discord embed limit
+            await message.edit({ embeds: [embed], components: [] });
+        }
+    });
+
+    collector.on('end', () => {
+        clearInterval(interval);
+    });
+}
+
     
             const deleteButton = new ButtonBuilder()
                 .setCustomId("deleteLyrics")
