@@ -520,25 +520,6 @@ function createActionRow2(disabled) {
             new ButtonBuilder().setCustomId("volumeDown").setEmoji('🔉').setStyle(ButtonStyle.Secondary).setDisabled(disabled)
         );
 }
-const Riffy = require("riffy");
-
-// แก้ไขฟังก์ชัน resolve แบบ override
-Riffy.prototype.resolve = async function (query) {
-  const axios = require("axios");
-  const Track = require("riffy/build/structures/Track");
-
-  const response = await axios.get("https://your-api-url", {
-    params: { q: query }
-  });
-
-  console.log("DEBUG Riffy Response:", response.data);
-
-  if (Array.isArray(response.data)) {
-    return response.data.map(item => new Track(item));
-  } else {
-    throw new TypeError("Expected array but got: " + typeof response.data);
-  }
-};
 
 
 
