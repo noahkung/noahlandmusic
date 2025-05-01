@@ -466,20 +466,37 @@ async function showLyrics(channel, player) {
     const interval = setInterval(updateLyrics, 3000);
     updateLyrics(); 
 
-    const collector = message.createMessageComponentCollector({ time: 600000 });
+    const interval = setInterval(async () => {
+        if (!player.playing || player.paused) return;
+        await updateLyrics();
+    }, 3000); // ปรับได้ตามต้องการ (เช่น ทุก 3 วินาที)
 
-collector.on('collect', async i => {
-    await i.deferUpdate();
+    const collector = message.createMessageComponentCollector({
+        filter: i => ['stopLyrics', 'fullLyrics'].includes(i.customId),
+        time: songDuration * 1000,
+    });
 
-    if (i.customId === "stopLyrics") {
+    collector.on('collect', async i => {
+        await i.deferUpdate();
+
+        if (i.customId === 'stopLyrics') {
+            clearInterval(interval);
+            await message.delete().catch(() => {});
+        } else if (i.customId === 'fullLyrics') {
+            clearInterval(interval);
+            const fullEmbed = new EmbedBuilder()
+                .setTitle(`🎵 Full Lyrics: ${track.title}`)
+                .setDescription(lines.join('\n').slice(0, 4096)) // Discord limit
+                .setColor(config.embedColor);
+            await message.edit({ embeds: [fullEmbed], components: [] });
+        }
+    });
+
+    collector.on('end', () => {
         clearInterval(interval);
-        await message.delete();
-    } else if (i.customId === "fullLyrics") {
-        clearInterval(interval);
-        embed.setDescription(lines.join('\n').slice(0, 4096));
-        await message.edit({ embeds: [embed], components: [] });
-    }
-}); // ✅ ปิด collector.on อย่างถูกต้อง
+    });
+}
+
 
 
     collector.on('end', () => {
