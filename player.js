@@ -495,14 +495,14 @@ collector.on('collect', async i => {
     
             const deleteRow = new ActionRowBuilder().addComponents(deleteButton);
     
-           async function someFunction() {
-    await message.edit({ embeds: [embed], components: [deleteRow] }); // ✅
+if (i.customId === "delete") {
+    await message.edit({ embeds: [embed], components: [deleteRow] });
+} else if (i.customId === "fullLyrics") {
+    clearInterval(interval);
+    embed.setDescription(lines.join('\n'));
+    await message.edit({ embeds: [embed], components: [] });
+}
 
-               } else if (i.customId === "fullLyrics") {
-            clearInterval(interval);
-            embed.setDescription(lines.join('\n'));
-            await message.edit({ embeds: [embed], components: [] });
-        }
 
     });
 
