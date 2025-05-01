@@ -488,23 +488,25 @@ collector.on('collect', async i => {
 }
 
     
-            const deleteButton = new ButtonBuilder()
-                .setCustomId("deleteLyrics")
-                .setLabel("Delete")
-                .setStyle(ButtonStyle.Danger);
-    
-            const deleteRow = new ActionRowBuilder().addComponents(deleteButton);
-    
-if (i.customId === "delete") {
-    await message.edit({ embeds: [embed], components: [deleteRow] });
-} else if (i.customId === "fullLyrics") {
+const deleteButton = new ButtonBuilder()
+  .setCustomId("deleteLyrics")
+  .setLabel("Delete")
+  .setStyle(ButtonStyle.Danger);
+
+const deleteRow = new ActionRowBuilder().addComponents(deleteButton);
+
+client.on('interactionCreate', async (i) => {
+  if (!i.isButton()) return; // ป้องกันเฉพาะ button interaction
+
+  if (i.customId === "delete") {
+    await i.message.edit({ embeds: [embed], components: [deleteRow] });
+  } else if (i.customId === "fullLyrics") {
     clearInterval(interval);
     embed.setDescription(lines.join('\n'));
-    await message.edit({ embeds: [embed], components: [] });
-}
+    await i.message.edit({ embeds: [embed], components: [] });
+  }
+});
 
-
-    });
 
     collector.on('end', () => {
         clearInterval(interval);
