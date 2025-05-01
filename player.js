@@ -463,7 +463,6 @@ async function showLyrics(channel, player) {
         await message.edit({ embeds: [embed] });
     };
 
-    const interval = setInterval(updateLyrics, 3000);
     updateLyrics(); 
 
     const interval = setInterval(async () => {
