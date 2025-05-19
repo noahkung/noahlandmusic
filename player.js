@@ -102,7 +102,7 @@ function initializePlayer(client) {
                 iconURL: musicIcons.playerIcon,
                 url: config.SupportServer
             })
-            .setFooter({ text: `Developed by NOAHLAND | Projectnoahland v1.2`, iconURL: musicIcons.heartIcon })
+            .setFooter({ text: `Developed by SSRR | Prime Music v1.2`, iconURL: musicIcons.heartIcon })
             .setTimestamp()
             .setDescription(  
                 `- **Title:** [${track.info.title}](${track.info.uri})\n` +
@@ -367,20 +367,10 @@ async function getLyrics(trackName, artistName, duration) {
 
         //console.log(`✅ Cleaned Data: ${trackName} - ${artistName} (${duration}s)`);
 
-let response = await axios.get(`https://lrclib.net/api/get`, {
-    params: { track_name: trackName, artist_name: artistName, duration }
-});
-
-// ตรวจสอบว่า response.data เป็นอาเรย์หรือไม่
-if (Array.isArray(response.data)) {
-    // ถ้าเป็นอาเรย์ ให้ใช้ .map() กับข้อมูลในอาเรย์
-    return response.data.map(item => item.lyrics || null).join('\n');
-}
-
-// ถ้า response.data ไม่ใช่อาเรย์ ให้เช็ค syncedLyrics หรือ plainLyrics
-if (response.data.syncedLyrics || response.data.plainLyrics) {
-    return response.data.syncedLyrics || response.data.plainLyrics;
-}
+        
+        let response = await axios.get(`https://lrclib.net/api/get`, {
+            params: { track_name: trackName, artist_name: artistName, duration }
+        });
 
         if (response.data.syncedLyrics || response.data.plainLyrics) {
             return response.data.syncedLyrics || response.data.plainLyrics;
@@ -463,66 +453,33 @@ async function showLyrics(channel, player) {
         await message.edit({ embeds: [embed] });
     };
 
+    const interval = setInterval(updateLyrics, 3000);
     updateLyrics(); 
 
-    const interval = setInterval(async () => {
-        if (!player.playing || player.paused) return;
-        await updateLyrics();
-    }, 3000); // ปรับได้ตามต้องการ (เช่น ทุก 3 วินาที)
-
-    const collector = message.createMessageComponentCollector({
-        filter: i => ['stopLyrics', 'fullLyrics'].includes(i.customId),
-        time: songDuration * 1000,
-    });
+    const collector = message.createMessageComponentCollector({ time: 600000 });
 
     collector.on('collect', async i => {
         await i.deferUpdate();
-
-        if (i.customId === 'stopLyrics') {
+    
+        if (i.customId === "stopLyrics") {
             clearInterval(interval);
-            await message.delete().catch(() => {});
-        } else if (i.customId === 'fullLyrics') {
+            await message.delete();
+        } else if (i.customId === "fullLyrics") {
             clearInterval(interval);
-            const fullEmbed = new EmbedBuilder()
-                .setTitle(`🎵 Full Lyrics: ${track.title}`)
-                .setDescription(lines.join('\n').slice(0, 4096)) // Discord limit
-                .setColor(config.embedColor);
-            await message.edit({ embeds: [fullEmbed], components: [] });
+            embed.setDescription(lines.join('\n'));
+    
+            const deleteButton = new ButtonBuilder()
+                .setCustomId("deleteLyrics")
+                .setLabel("Delete")
+                .setStyle(ButtonStyle.Danger);
+    
+            const deleteRow = new ActionRowBuilder().addComponents(deleteButton);
+    
+            await message.edit({ embeds: [embed], components: [deleteRow] });
+        } else if (i.customId === "deleteLyrics") {
+            await message.delete();
         }
     });
-
-    collector.on('end', () => {
-        clearInterval(interval);
-    });
-}
-
-
-
-    collector.on('end', () => {
-        clearInterval(interval);
-    });
-}
-
-    
-const deleteButton = new ButtonBuilder()
-  .setCustomId("deleteLyrics")
-  .setLabel("Delete")
-  .setStyle(ButtonStyle.Danger);
-
-const deleteRow = new ActionRowBuilder().addComponents(deleteButton);
-
-client.on('interactionCreate', async (i) => {
-  if (!i.isButton()) return; // ป้องกันเฉพาะ button interaction
-
-  if (i.customId === "delete") {
-    await i.message.edit({ embeds: [embed], components: [deleteRow] });
-  } else if (i.customId === "fullLyrics") {
-    clearInterval(interval);
-    embed.setDescription(lines.join('\n'));
-    await i.message.edit({ embeds: [embed], components: [] });
-  }
-});
-
 
     collector.on('end', () => {
         clearInterval(interval);
@@ -553,8 +510,5 @@ function createActionRow2(disabled) {
             new ButtonBuilder().setCustomId("volumeDown").setEmoji('🔉').setStyle(ButtonStyle.Secondary).setDisabled(disabled)
         );
 }
-
-
-
 
 module.exports = { initializePlayer };
