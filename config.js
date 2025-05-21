@@ -18,10 +18,10 @@ module.exports = {
   nodes: [
      {
       name: "noahland",
-      password: "youshallnotpass",
-      host: "lavalink.jirayu.net",
-      port:  13591,
-      secure: false
+      password: "DevamOP",
+      host: "lavalink.devxcode.in",
+      port:  443,
+      secure: true
     }
   ]
 }
