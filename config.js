@@ -17,7 +17,7 @@ module.exports = {
   errorLog: "", 
   nodes: [
      {
-      name: "GlaceYT",
+      name: "noahland",
       password: "youshallnotpass",
       host: "lavalink.jirayu.net",
       port:  13591,
