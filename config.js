@@ -18,8 +18,8 @@ module.exports = {
   nodes: [
      {
       name: "noahland",
-      password: "https://dsc.gg/ajidevserver",
-      host: "lavalinkv3-id.serenetia.com",
+      password: "nextgencoderspvt",
+      host: "lavalink.nextgencoders.xyz",
       port:  443,
       secure: true
     }
