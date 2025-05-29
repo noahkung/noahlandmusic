@@ -10,14 +10,6 @@ const path = require("path");
 const axios = require('axios');
 const { autoplayCollection } = require('./mongodb.js');
 const guildTrackMessages = new Map();
-function sanitizeText(text) {
-    return text
-        .replace(/[`*_~\\]/g, '') // Markdown
-        .replace(/[\u200B-\u200D\uFEFF]/g, '') // Zero-width characters
-        .replace(/"/g, '\\"') // Escape quote
-        .trim();
-}
-
 
 async function sendMessageWithPermissionsCheck(channel, embed, attachment, actionRow1, actionRow2) {
     try {
@@ -520,33 +512,3 @@ function createActionRow2(disabled) {
 }
 
 module.exports = { initializePlayer };
- data: new SlashCommandBuilder()
-    .setName('play')
-    .setDescription('Play a song')
-    .addStringOption(option =>
-      option.setName('query')
-        .setDescription('Search for a song')
-        .setRequired(true)),
-  
-  async execute(interaction) {
-    try {
-      // ต้อง defer ก่อนที่เราจะทำอะไรที่ใช้เวลานาน
-      await interaction.deferReply();  // ใส่ตรงนี้เพื่อให้ Discord รู้ว่า interaction นี้ยังไม่หมดเวลา
-
-      const query = interaction.options.getString('query');
-      
-      // ทำสิ่งที่ต้องการ เช่น ค้นหาเพลง, เล่นเพลง
-      const song = await searchSong(query);
-      if (!song) {
-        await interaction.editReply('ไม่พบเพลงที่ค้นหา');
-        return;
-      }
-
-      // ตอบกลับหลังจากทำการค้นหาเพลงเสร็จ
-      await interaction.editReply(`กำลังเล่นเพลง: ${song.title}`);
-    } catch (err) {
-      console.error(err);
-      await interaction.editReply('เกิดข้อผิดพลาดขณะเล่นเพลง');
-    }
-  }
-};
