@@ -10,6 +10,14 @@ const path = require("path");
 const axios = require('axios');
 const { autoplayCollection } = require('./mongodb.js');
 const guildTrackMessages = new Map();
+function sanitizeText(text) {
+    return text
+        .replace(/[`*_~\\]/g, '') // Markdown
+        .replace(/[\u200B-\u200D\uFEFF]/g, '') // Zero-width characters
+        .replace(/"/g, '\\"') // Escape quote
+        .trim();
+}
+
 
 async function sendMessageWithPermissionsCheck(channel, embed, attachment, actionRow1, actionRow2) {
     try {
